@@ -21,17 +21,17 @@ public class MessageService {
         this.userRepository = userRepository;
     }
 
-    public MessageResponseDto sendMessage(MessageRequestDto messageDto) throws Exception {
+    public MessageResponseDto sendMessage(MessageRequestDto messageDto)  {
 
-        User user = userRepository.findById(messageDto.getUser_id())
-                .orElseThrow(() -> new Exception("Target user not found"));
-
-        Message message = new Message(messageDto);
-        message.setDate(LocalDateTime.now());
-        message.setUser(user);
-        messageRepository.save(message);
-        return new MessageResponseDto(message);
-
+        Optional<User> userOpt = userRepository.findById(messageDto.getUser_id());
+if (userOpt.isPresent()) {
+    User user = userOpt.get();
+    Message message = new Message(messageDto);
+    message.setDate(LocalDateTime.now());
+    message.setUser(user);
+    messageRepository.save(message);
+    return new MessageResponseDto(message);
+} return null;
     }
 
 }
