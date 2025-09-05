@@ -20,7 +20,9 @@ public class MessageResponseDto {
         setId(message.getId());
         setText(message.getText());
         setDate(message.getDate());
-        setUser(new UserResponseDto(message.getUser()));
+        if (message.getUser() != null) {
+            setUser(new UserResponseDto(message.getUser()));
+        }
     }
 
 }

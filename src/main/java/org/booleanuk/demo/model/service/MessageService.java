@@ -20,18 +20,23 @@ public class MessageService {
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
     }
-
+    public List<MessageResponseDto> getAll() {
+        return messageRepository.findAll().stream()
+                .map(MessageResponseDto::new)
+                .toList();
+    }
     public MessageResponseDto sendMessage(MessageRequestDto messageDto)  {
 
         Optional<User> userOpt = userRepository.findById(messageDto.getUser_id());
-if (userOpt.isPresent()) {
-    User user = userOpt.get();
-    Message message = new Message(messageDto);
-    message.setDate(LocalDateTime.now());
-    message.setUser(user);
+        Message message = new Message(messageDto);
+        message.setDate(LocalDateTime.now());
+        if (userOpt.isPresent()) {
+        User user = userOpt.get();
+        message.setUser(user);
+        }
     messageRepository.save(message);
     return new MessageResponseDto(message);
-} return null;
+
     }
 
 }

@@ -62,6 +62,7 @@ public class UserMessagesController {
         return ResponseEntity.ok(message);
     }
 
+
     //mono
 
     @GetMapping("users/{id}/listen")
@@ -88,11 +89,17 @@ public class UserMessagesController {
                     Optional<MessageResponseDto> newMessage = u.getMessageList().stream()
                             .filter(m -> m.getDate().isAfter(lastTimeChecked))
                             .findFirst();
+                    Optional<MessageResponseDto> broadCastMessage = messageService.getAll().stream()
+                            .filter(m -> m.getUser() == null && m.getDate().isAfter(lastTimeChecked))
+                            .findFirst();
 
                     if (newMessage.isPresent()) {
                         // [!note] Check if `Restaurant` is `open` or not
                         return Mono.just(newMessage.get());
-                    }// [!note] It is, so get back with data
+                    } else if (broadCastMessage.isPresent()) {
+                        return Mono.just(broadCastMessage.get());
+                    }
+                    // [!note] It is, so get back with data
                     else  // [!note] It's not, so let's try again in 1 second
                     {
                         return Mono.delay(Duration.ofSeconds(1))
